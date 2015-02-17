@@ -91,15 +91,19 @@ var sprites = {
         { "width": 400, "height": 71*5, "offset": { "x": 0, "y": 71*2 } },
         { "width": 400, "height": 71*2, "offset": { "x": 0, "y": 0 } },
     ],
-    "arrow": { "width": 98, "height": 107, "offset": { "x": 0, "y": 71*17 } },
-    "monster": { "width": 90, "height": 90, "offset": { "x": 98, "y": 71*17 } },
-    "tree": { "width": 45, "height": 127, "offset": { "x": 188, "y": 71*17 } },
+    "arrow": { "width": 98, "height": 109, "offset": { "x": 0, "y": 71*17 } },
+    "monster": { "width": 107, "height": 107, "offset": { "x": 98, "y": 71*17 } },
+    "tree": { "width": 47, "height": 131, "offset": { "x": 256, "y": 71*17 } },
+    "satoshi": { "width": 29, "height": 29, "offset": { "x": 256, "y": 71*17+1 } },
+    "serena": { "width": 29, "height": 29, "offset": { "x": 256, "y": 71*17+1+29*1 } },
+    "urika": { "width": 29, "height": 29, "offset": { "x": 256, "y": 71*17+1+29*2 } },
+    "shitoron": { "width": 29, "height": 29, "offset": { "x": 256, "y": 71*17+1+29*3 } }
 }
 
 var spritesimg = new Image()
-spritesimg.src = "sprites.png"
+spritesimg.src = "sprites2.png"
 
-var ps = gen2(50)
+var ps = gen2(200)
 // ps = [0,0,6,0,0,0,0,7]
 console.log(ps)
 
@@ -127,6 +131,20 @@ spritesimg.onload = function () {
         return y+sprites.paths[i].height
     }, 0)
 
+    function canarrow(a, b) {
+        var canvas = document.createElement('canvas')
+        var context = canvas.getContext('2d')
+        canvas.width = sprites.arrow.width
+        canvas.height = sprites.arrow.height
+        drawImage(context, sprites.arrow, 0, 0)
+        drawImage(context, sprites[a], 35, 35)
+        drawImage(context, sprites[b], 35, 35 + sprites[a].height + 7)
+        return canvas
+    }
+
+    var offarrow1 = canarrow('satoshi', 'serena')
+    var offarrow2 = canarrow('shitoron', 'urika')
+
     // 计算全局中可以改变通道的下标索引
     var str = ps.join('')
     var re = /(12*3)|(42*5)|6/g
@@ -143,21 +161,37 @@ spritesimg.onload = function () {
     console.log(li[0], li[1])
 
     function helper(i, tp, a, b, c) {
+        var nota = [1,0][a]
         // var lii = li[/*0*/a].indexOf(i)
         if (li[0].concat(li[1]).indexOf(i) === -1) {
             if (!ls) tp.replace(/*2*/c, lottery(/*[1,2]*/b))
-            else if (tp[0] === c) tp[lottery([0,1])] = lottery(b)
+            else if (tp[0] === c) tp = [lottery(b), lottery(b)]
         } else { // 如果是改变路径
             if (ls && tp[0] === /*2*/c) { // 已经在同一路径上
-                if (li[/*0*/a].indexOf(i) === li[a].length - 1) { // 之后不存再改变路径
-                    tp[lottery([0, 1])] = 1; //选择其中一个改变路径
-                    ls = false
-                } else { //否则选择其中一个改变路径或者不改变
-                    tp[lottery([0, 1])] = lottery(/*[1, 2]*/b);
-                    ls = (tp.indexOf(1) === -1)
+                var lia = li[a].some(function (x) { return x > i})
+                var linota = li[nota].some(function (x) { return x > i})
+                console.log('both on track ' + c, lia, linota)
+                if (lia && linota) {
+                    tp = [lottery(b), lottery(b)]
+                    // ls = (tp[0] === tp[1])
+                } else if (lia) {
+                    tp[lottery([0, 1])] = lottery(b)
+                } else if (linota) {
+                    tp = [1, 1]
+                    tp[lottery([0, 1])] = lottery(b)
+                } else {
+                    tp[lottery([0,1])] = 1
                 }
+                ls = (tp[0] === tp[1])
+                // if (li[/*0*/a].indexOf(i) === li[a].length - 1) { // 之后不存再改变路径
+                //     tp[lottery([0, 1])] = 1; //选择其中一个改变路径
+                //     ls = false
+                // } else { //否则选择其中一个改变路径或者不改变
+                //     tp[lottery([0, 1])] = lottery(/*[1, 2]*/b);
+                //     ls = (tp.indexOf(1) === -1)
+                // }
             } else if (!ls) { // 不再同一路径上，之后还存在改变路径
-                if (li[[1,0][a]].some(function (x) { return x > i})) {
+                if (li[nota].some(function (x) { return x > i})) {
                     tp.replace(/*2*/c, lottery(/*[1,2]*/b)); // 改变或不改变路径
                     ls = (tp.indexOf(1) !== -1)
                 }
@@ -182,9 +216,10 @@ spritesimg.onload = function () {
         }
     }
     // sp.forEach(function (x) { console.log(x)})
+    console.log(sp[n-1])
 
     // 左中右
-    var pos = [43, 150, 257];
+    var pos = [44, 150, 257];
     var pause = 0
     // 屏幕画布
     var can = document.createElement('canvas')
@@ -218,8 +253,8 @@ spritesimg.onload = function () {
             this.x, this.y - (ws[this.p] - sprites.paths[ps[this.p]].height))
     }
 
-    var arr1 = new Arrow(0, pos[0], 0, 10, 0)
-    var arr2 = new Arrow(1, pos[2], 0, 6, 0)
+    var arr1 = new Arrow(0, pos[0], 0, 13, 0)
+    var arr2 = new Arrow(1, pos[2], 0, 12, 0)
 
     function fmult (pid, cid, x, y) {
         if (cid === 0 || cid === 2) if (pid != 6) return pos[cid]
@@ -257,9 +292,9 @@ spritesimg.onload = function () {
     function render(camy) {
         ctx.drawImage(offcan, 0, camy - can.height, can.width, can.height,
                 0, 0, can.width, can.height)
-        drawImage(ctx, sprites.arrow, arr1.x,
+        ctx.drawImage(offarrow1, arr1.x,
             pheight - arr1.y - sprites.arrow.height - (camy - can.height))
-        drawImage(ctx, sprites.arrow, arr2.x,
+        ctx.drawImage(offarrow2, arr2.x,
             pheight - arr2.y - sprites.arrow.height - (camy - can.height))
     }
     render(lookAt())
