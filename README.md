@@ -21,11 +21,12 @@ This is an implementation of [Clemont's invention to make hard decisions easier]
  - [ ] setoff at the same time
  - [ ] arrived at the same time
  - [ ] maximum displacement difference
- - [ ] slow speed in the curve
+ - [ ] slow in the curve
  - [ ] no overtake in the same path
  - [ ] random speed effect
-- [ ] `share` link
-- [ ] details of `about`
+- [ ] `Share` link
+- [ ] details of `About`
+- [ ] optimization for sprites
 
 ### License
 

@@ -253,8 +253,8 @@ spritesimg.onload = function () {
             this.x, this.y - (ws[this.p] - sprites.paths[ps[this.p]].height))
     }
 
-    var arr1 = new Arrow(0, pos[0], 0, 13, 0)
-    var arr2 = new Arrow(1, pos[2], 0, 12, 0)
+    var arr1 = new Arrow(0, pos[0], 0, 12, 0)
+    var arr2 = new Arrow(1, pos[2], 0, 11, 0)
 
     function fmult (pid, cid, x, y) {
         if (cid === 0 || cid === 2) if (pid != 6) return pos[cid]
@@ -275,8 +275,8 @@ spritesimg.onload = function () {
     window.addEventListener('keydown', function(e) {
         if (e.keyCode === 27) pause = !pause;
         else if (e.keyCode === 32) {
-            arr1 = new Arrow(0, pos[0], 0, 10, 0)
-            arr2 = new Arrow(1, pos[2], 0, 10, 0)
+            arr1 = new Arrow(0, pos[0], 0, 12, 0)
+            arr2 = new Arrow(1, pos[2], 0, 11, 0)
             pause = 0
         }
     }, true)
